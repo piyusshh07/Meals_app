@@ -22,9 +22,7 @@ void _selectedCategory(BuildContext context,Category category){
 }
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title:const Text("Pick your category")),
-      body:GridView(padding:EdgeInsets.all(24),gridDelegate:const  SliverGridDelegateWithFixedCrossAxisCount(
+    return GridView(padding:EdgeInsets.all(24),gridDelegate:const  SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         childAspectRatio: 1.5,
         crossAxisSpacing: 20,
@@ -38,7 +36,7 @@ void _selectedCategory(BuildContext context,Category category){
         },)
        
         
-      ],)
+      ],
     );
   }
 
