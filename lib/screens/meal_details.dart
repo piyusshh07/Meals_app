@@ -5,15 +5,21 @@ import 'package:meals_app/main.dart';
 import '../models/meal.dart';
 
 class MealDetailsScreen extends StatelessWidget {
-  MealDetailsScreen({super.key, required this.meal});
+  MealDetailsScreen({super.key, required this.meal,required this.OnTogglefavorite});
 
   final Meal meal;
-
+  final void Function(Meal meal) OnTogglefavorite;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
           title: Text(meal.title),
+          actions: [
+            IconButton(onPressed: (){
+             OnTogglefavorite(meal);
+               },
+               icon: Icon(Icons.star))
+          ],
         ),
         body: SingleChildScrollView(
           child: Column(
@@ -57,7 +63,7 @@ class MealDetailsScreen extends StatelessWidget {
                       colorScheme.onBackground),),
                   ),
                 ),
-          
+
             ],
           ),
         ));
