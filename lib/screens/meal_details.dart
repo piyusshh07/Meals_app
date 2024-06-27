@@ -1,24 +1,36 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:meals_app/main.dart';
-
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/meal.dart';
+import 'package:meals_app/providers/favorites_provider.dart';
 
-class MealDetailsScreen extends StatelessWidget {
-  MealDetailsScreen({super.key, required this.meal,required this.OnTogglefavorite});
+class MealDetailsScreen extends ConsumerWidget {
+  MealDetailsScreen({super.key, required this.meal});
 
   final Meal meal;
-  final void Function(Meal meal) OnTogglefavorite;
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final favoritemeals=ref.watch(favoriteMealProvider);
+    final isFavorite=favoritemeals.contains(meal);
     return Scaffold(
         appBar: AppBar(
           title: Text(meal.title),
           actions: [
-            IconButton(onPressed: (){
-             OnTogglefavorite(meal);
-               },
-               icon: Icon(Icons.star))
+            IconButton(
+                onPressed: () {
+                  final wasAdded = ref
+                      .read(favoriteMealProvider.notifier)
+                      .toggleMealfavoriteStatus(meal);
+
+                  ScaffoldMessenger.of(context).clearSnackBars();
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text(wasAdded
+                          ? 'Meal Added as a favorite'
+                          : 'Meal removed from favorites')));
+                },
+                icon: Icon(isFavorite ? Icons.star: Icons.star_border))
           ],
         ),
         body: SingleChildScrollView(
@@ -30,40 +42,45 @@ class MealDetailsScreen extends StatelessWidget {
                 height: 300,
                 fit: BoxFit.cover,
               ),
-              SizedBox(height: 14,),
-               Text('Ingredients',
-                 style: Theme.of(context).
-                 textTheme.titleLarge!.
-                 copyWith(color: Theme.of(context).
-                 colorScheme.primary,fontWeight: FontWeight.bold),
-               ),
-             SizedBox(height: 10,) ,
-              for(final ingredient in meal.ingredients)
-                Text(ingredient,
-                  style: Theme.of(context).
-                textTheme.bodyMedium!.
-                copyWith(color: Theme.of(context).
-                colorScheme.onBackground),),
-              SizedBox(height: 20,),
-              Text('Steps',
-                style: Theme.of(context).
-                textTheme.titleLarge!.
-                copyWith(color: Theme.of(context).
-                colorScheme.primary,fontWeight: FontWeight.bold),
+              SizedBox(
+                height: 14,
               ),
-              for(final steps in meal.steps)
+              Text(
+                'Ingredients',
+                style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontWeight: FontWeight.bold),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              for (final ingredient in meal.ingredients)
+                Text(
+                  ingredient,
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                      color: Theme.of(context).colorScheme.onBackground),
+                ),
+              SizedBox(
+                height: 20,
+              ),
+              Text(
+                'Steps',
+                style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontWeight: FontWeight.bold),
+              ),
+              for (final steps in meal.steps)
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10,vertical: 8),
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                   child: Expanded(
-                    child: Text(steps,
+                    child: Text(
+                      steps,
                       textAlign: TextAlign.center,
-                      style: Theme.of(context).
-                      textTheme.bodyMedium!.
-                      copyWith(color: Theme.of(context).
-                      colorScheme.onBackground),),
+                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                          color: Theme.of(context).colorScheme.onBackground),
+                    ),
                   ),
                 ),
-
             ],
           ),
         ));
